@@ -1,12 +1,8 @@
 import express from 'express';
-import cors from 'cors';
-
 import mongoose from 'mongoose';
-import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { movieModel, theatreModel, screenModel } from './modelFunctions';
-//mport {initialiseModels} from './modelFunctions'
 import schema from './schema';
 mongoose.Promise = global.Promise;
 
@@ -24,7 +20,6 @@ const app = express();
 const Movies = movieModel(mongoose);
 const Theatres = theatreModel(mongoose);
 const Screens = screenModel(mongoose);
-app.use(morgan('dev'));
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use(
   '/graphiql',
@@ -33,7 +28,7 @@ app.use(
   })
 );
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`GraphQL server running on port ${PORT}.`);
 });
