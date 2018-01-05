@@ -1,5 +1,10 @@
 import { Movies, Theatres, Screens } from './index';
 
+const roundUpDigits = n => {
+  if (parseInt(n / 10) === 0) {
+    return `0${n}`;
+  } else return n;
+};
 let movies = null,
   screens = null;
 export default {
@@ -15,12 +20,14 @@ export default {
         time.setHours(time.getHours() + h);
         time.setMinutes(time.getMinutes() + m);
         movies = await Movies.find({ language: { $in: args.languages } });
-        /*
-        screens = await Screens.find({
-          movieID: { $in: movies.map(i => i._id) },
-        });*/
-        console.log('1', parseInt(`${time2.getHours()}${time2.getMinutes()}`));
-        console.log('2', parseInt(`${time.getHours()}${time.getMinutes()}`));
+        let timeH = null,
+          timeM = null,
+          time2H = null,
+          time2M = null;
+        time2H = time2.getHours();
+        time2M = roundUpDigits(time2.getMinutes());
+        timeH = time.getHours();
+        timeM = roundUpDigits(time.getMinutes());
         screens = await Screens.aggregate([
           {
             $match: {
@@ -36,16 +43,10 @@ export default {
                   cond: {
                     $and: [
                       {
-                        $gt: [
-                          '$$time',
-                          parseInt(`${time2.getHours()}${time2.getMinutes()}`),
-                        ],
+                        $gt: ['$$time', parseInt(`${time2H}${time2M}`)],
                       },
                       {
-                        $lte: [
-                          '$$time',
-                          parseInt(`${time.getHours()}${time.getMinutes()}`),
-                        ],
+                        $lte: ['$$time', parseInt(`${timeH}${timeM}`)],
                       },
                     ],
                   },
@@ -69,6 +70,14 @@ export default {
         let time2 = new Date();
         time.setHours(time.getHours() + h);
         time.setMinutes(time.getMinutes() + m);
+        let timeH = null,
+          timeM = null,
+          time2H = null,
+          time2M = null;
+        time2H = time2.getHours();
+        time2M = roundUpDigits(time2.getMinutes());
+        timeH = time.getHours();
+        timeM = roundUpDigits(time.getMinutes());
         movies = await Movies.find({});
         screens = await Screens.aggregate([
           {
@@ -85,16 +94,10 @@ export default {
                   cond: {
                     $and: [
                       {
-                        $gt: [
-                          '$$time',
-                          parseInt(`${time2.getHours()}${time2.getMinutes()}`),
-                        ],
+                        $gt: ['$$time', parseInt(`${time2H}${time2M}`)],
                       },
                       {
-                        $lte: [
-                          '$$time',
-                          parseInt(`${time.getHours()}${time.getMinutes()}`),
-                        ],
+                        $lte: ['$$time', parseInt(`${timeH}${timeM}`)],
                       },
                     ],
                   },
